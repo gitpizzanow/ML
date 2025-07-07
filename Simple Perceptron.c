@@ -19,11 +19,6 @@ step function
 
 */
 
-float sum(float* T , size_t size){
-    float s=0;
-    for(size_t i=0;i<size;i++) s+= T[i];
-}
-
 float activation(float a){
     return (a>0)?1:0;
 }

@@ -78,4 +78,5 @@ int main(void){
   
 
   train((float*)X ,yhat, target, row,col,w,10 );
+  free(yhat);
 }

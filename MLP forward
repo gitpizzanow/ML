@@ -1,0 +1,55 @@
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#define ROWS 3
+#define COLS 2
+
+float sigmoid(float a) { return 1.0f / (1 + exp(-a)); }
+
+int step(float a) { return (a >= 0.5) ? 1 : 0; }
+
+void forward(float* X, float* weights, float* bayes, float* dv, float* db,
+             float* H, size_t N, float* pred, const float* y, int k) {
+  for (size_t j = 0; j < N; j++) {
+    float Z = 0;
+    for (size_t i = 0; i < COLS; i++)
+      Z += X[k * COLS + i] * weights[j * COLS + i];
+
+    H[j] = sigmoid(Z + bayes[j]);
+    // printf("Z%zu = %.2f \n",j ,H[j]);
+  }
+
+  float yhat = 0, predict = 0;
+  for (size_t j = 0; j < N; j++) yhat += (H[j] * dv[j]);
+
+  predict = sigmoid(yhat + *db);
+  pred[k] = predict;
+  printf("Y%d = %.0f , pred = %.2f , ŷ=%d\n", k, y[k], predict, step(predict));
+}
+
+int main() {
+  float X[][2] = {
+      {1, 0},  // 1
+      {0, 0},  // 0
+      {1, 1}   //  0
+  };
+  float y[] = {1, 1, 1};
+
+  float weights[] = {
+      0.13, 0.47,  // w11 ,  w21
+      0.79, 0.06,  // w12, w22
+      0.34, 0.72   // w13 , w33
+
+  };
+  // w11, w21 -> h1 | w12, w22 -> h2 | w13, w33 -> h3
+  float bayes[] = {0.2, 0.1, 0.04};
+  float dv[] = {0.21, 0.68, 0.39};
+  float db = 0.2;
+
+  float H[3];    // one hidden layer
+  size_t N = 3;  // 3 neurons
+  float pred[3];
+
+  forward((float*)X, weights, bayes, dv, &db, H, N, pred, y, 0);
+  // we will deal with other samples later
+}
